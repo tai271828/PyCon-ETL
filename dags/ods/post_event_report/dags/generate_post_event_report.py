@@ -5,7 +5,9 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash_operator import BashOperator
+from ods.post_event_report.udfs import bigquery
 
 DEFAULT_ARGS = {
     "owner": "tai271828",
@@ -29,8 +31,13 @@ trigger_command_dir = os.path.realpath(os.path.join(file_in_dir, "../scripts/"))
 trigger_command = os.path.join(trigger_command_dir, "trigger-report-generator.sh")
 
 with dag:
+    get_ticket_data = PythonOperator(
+        task_id="FETCH_TICKET_DATA",
+        python_callable=bigquery.fetch,
+    )
+
     if os.path.exists(trigger_command):
-        run_this = BashOperator(
+        generate_report = BashOperator(
             task_id="QUERY_AND_GENERATE_REPORT",
             # the trailing space is necessary for an airflow pitfall
             # ref: https://airflow.apache.org/docs/apache-airflow/stable/howto/operator/bash.html
@@ -39,6 +46,8 @@ with dag:
         )
     else:
         raise Exception(f"{trigger_command} can not be found.")
+
+    get_ticket_data >> generate_report
 
 
 if __name__ == "__main__":
