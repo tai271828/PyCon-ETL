@@ -36,11 +36,9 @@ def sanitize_column_names(df):
 
 
 def main():
-    #csv_file = "/home/tai271828/work-my-projects/pycontw-projects/post-events/2020/data/tickets/without-identities
-    # -rm-cols-for-bigquery-upload-01-sed-reedit-column-field-title/corporate-attendees.csv"
-    csv_file = "/home/tai271828/work-my-projects/pycontw-projects/PyCon-ETL-working/tmp.csv"
+    csv_file = "/home/tai271828/work-my-projects/pycontw-projects/PyCon-ETL-working/corporate-attendees.csv"
     dataset_name = "ods"
-    table_name = "tai_test"
+    table_name = "ods_ticket_corporate_attendees"
 
     # load the csv into bigquery
     with open(csv_file, "rb") as source_file:
