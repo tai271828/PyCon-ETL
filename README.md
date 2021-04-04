@@ -48,7 +48,7 @@ Using Airflow to implement our ETL pipelines
     1. `cp .env.template .env.staging`
     2. Follow the instruction in `.env.staging` and fill in your secrets
 3. Start the Airflow server:
-    * dev/test: `docker run --rm -p 80:8080 --name airflow  -v $(pwd)/dags:/usr/local/airflow/dags -v $(pwd)/service-account.json:/usr/local/airflow/service-account.json --env-file=./.env davidtnfsh/pycon_etl:test webserver`
+    * dev/test: `docker run --rm -p 80:8080 --name airflow  -v $(pwd)/dags:/usr/local/airflow/dags -v $(pwd)/service-account.json:/usr/local/airflow/service-account.json --env-file=./.env.staging davidtnfsh/pycon_etl:test webserver`
     * prod: `docker run --rm -p 80:8080 --name airflow  -v $(pwd)/dags:/usr/local/airflow/dags -v $(pwd)/service-account.json:/usr/local/airflow/service-account.json --env-file=./.env davidtnfsh/pycon_etl:prod webserver`
 #### BigQuery (Optional)
 1. Setup the Authentication of GCP: <https://googleapis.dev/python/google-api-core/latest/auth.html>
