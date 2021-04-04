@@ -12,6 +12,7 @@ searchconsole = "^0.0.4"
 google-cloud-bigquery = "<2.8.0"
 pycontw-report-generator = "^1.5.0"
 pandas = "^1.2.3"
+pyarrow = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 safety = "^1.9.0"
