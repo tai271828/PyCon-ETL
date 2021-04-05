@@ -16,11 +16,13 @@ def upload_dataframe_to_bigquery(df, project_id, dataset_name, table_name):
 
     job.result()
 
-    print("Loaded {} rows into {}:{}.".format(job.output_rows, dataset_name, table_name))
+    print(
+        "Loaded {} rows into {}:{}.".format(job.output_rows, dataset_name, table_name)
+    )
 
 
 def sanitize_column_name(column_name):
-    regex = re.compile('[^a-zA-Z]')
+    regex = re.compile("[^a-zA-Z]")
     return regex.sub("", column_name)
 
 
@@ -45,22 +47,14 @@ def main():
         "csv_file", type=str, help="Ticket CSV file",
     )
 
+    parser.add_argument("-p", "--project-id", help="BigQuery project ID")
+
     parser.add_argument(
-        "-p",
-        "--project-id",
-        help="BigQuery project ID"
+        "-d", "--dataset-name", help="BigQuery dataset name to create or append"
     )
 
     parser.add_argument(
-        "-d",
-        "--dataset-name",
-        help="BigQuery dataset name to create or append"
-    )
-
-    parser.add_argument(
-        "-t",
-        "--table-name",
-        help="BigQuery table name to create or append"
+        "-t", "--table-name", help="BigQuery table name to create or append"
     )
 
     args = parser.parse_args()
@@ -69,7 +63,9 @@ def main():
     with open(args.csv_file, "rb") as source_file:
         df = pd.read_csv(args.csv_file)
         sanitized_df = sanitize_column_names(df)
-        upload_dataframe_to_bigquery(sanitized_df, args.project_id, args.dataset_name, args.table_name)
+        upload_dataframe_to_bigquery(
+            sanitized_df, args.project_id, args.dataset_name, args.table_name
+        )
 
 
 if __name__ == "__main__":
