@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
+import argparse
 import re
 import pandas as pd
 from google.cloud import bigquery
 
 
-PROJECT_ID = "pycontw-225217"
-
-
-def upload_dataframe_to_bigquery(df, dataset_name, table_name, project_id=PROJECT_ID):
+def upload_dataframe_to_bigquery(df, project_id, dataset_name, table_name):
     client = bigquery.Client(project=project_id)
 
-    dataset_ref = bigquery.dataset.DatasetReference(PROJECT_ID, dataset_name)
+    dataset_ref = bigquery.dataset.DatasetReference(project_id, dataset_name)
     table_ref = bigquery.table.TableReference(dataset_ref, table_name)
 
     # dump the csv into bigquery
@@ -36,15 +34,42 @@ def sanitize_column_names(df):
 
 
 def main():
-    csv_file = "/home/tai271828/work-my-projects/pycontw-projects/PyCon-ETL-working/corporate-attendees.csv"
-    dataset_name = "ods"
-    table_name = "ods_ticket_corporate_attendees"
+    """
+    Commandline entrypoint
+    """
+    parser = argparse.ArgumentParser(
+        description="Sanitize ticket CSV and upload to BigQuery"
+    )
+
+    parser.add_argument(
+        "csv_file", type=str, help="Ticket CSV file",
+    )
+
+    parser.add_argument(
+        "-p",
+        "--project-id",
+        help="BigQuery project ID"
+    )
+
+    parser.add_argument(
+        "-d",
+        "--dataset-name",
+        help="BigQuery dataset name to create or append"
+    )
+
+    parser.add_argument(
+        "-t",
+        "--table-name",
+        help="BigQuery table name to create or append"
+    )
+
+    args = parser.parse_args()
 
     # load the csv into bigquery
-    with open(csv_file, "rb") as source_file:
-        df = pd.read_csv(csv_file)
+    with open(args.csv_file, "rb") as source_file:
+        df = pd.read_csv(args.csv_file)
         sanitized_df = sanitize_column_names(df)
-        upload_dataframe_to_bigquery(sanitized_df, dataset_name, table_name)
+        upload_dataframe_to_bigquery(sanitized_df, args.project_id, args.dataset_name, args.table_name)
 
 
 if __name__ == "__main__":
