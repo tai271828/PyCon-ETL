@@ -58,14 +58,25 @@ def main():
         "-t", "--table-name", help="BigQuery table name to create or append"
     )
 
+    parser.add_argument(
+        "--upload", action="store_true", help="Parsing the file but not upload it", default=False
+    )
+
     args = parser.parse_args()
 
     # load the csv into bigquery
     df = pd.read_csv(args.csv_file)
     sanitized_df = sanitize_column_names(df)
-    upload_dataframe_to_bigquery(
-        sanitized_df, args.project_id, args.dataset_name, args.table_name
-    )
+
+    if args.upload:
+        upload_dataframe_to_bigquery(
+            sanitized_df, args.project_id, args.dataset_name, args.table_name
+        )
+    else:
+        print("Dry-run mode. Data will not be uploaded.")
+        print(sanitized_df.columns)
+
+    return sanitized_df.columns
 
 
 if __name__ == "__main__":
