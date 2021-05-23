@@ -22,9 +22,33 @@ def upload_dataframe_to_bigquery(df, project_id, dataset_name, table_name):
     )
 
 
+def reserved_alphabet_space(string_as_is):
+    regex = re.compile("[^a-zA-Z 0-9]")
+    return regex.sub("", string_as_is)
+
+
+def reserved_only_one_space_between_words(string_as_is):
+    string_as_is = string_as_is.strip()
+    # two or more space between two words
+    # \w : word characters, a.k.a. alphanumeric and underscore
+    match = re.search("\w[ ]{2,}\w", string_as_is)
+
+    if not match:
+        return string_as_is
+
+    regex = re.compile("\s+")
+    string_as_is = regex.sub(" ", string_as_is)
+
+    return string_as_is
+
+
 def sanitize_column_name(column_name):
-    regex = re.compile("[^a-zA-Z]")
-    return regex.sub("", column_name)
+    column_name = reserved_alphabet_space(column_name)
+    column_name = reserved_only_one_space_between_words(column_name)
+    column_name = column_name.replace(" ", "_")
+    column_name = column_name.lower()
+
+    return column_name
 
 
 def sanitize_column_names(df):
@@ -74,6 +98,9 @@ def main():
         )
     else:
         print("Dry-run mode. Data will not be uploaded.")
+        print("Column names (as-is):")
+        print(df.columns)
+        print("Column names (to-be):")
         print(sanitized_df.columns)
 
     return sanitized_df.columns
