@@ -177,7 +177,7 @@ def sanitize_column_names(df):
 
     # pre-process of style of column name
     style_reformatted_columns = get_reformatted_style_columns(applied_heuristic_columns)
-    df_style_reformat_only = df.rename(columns=style_reformatted_columns)
+    df.rename(columns=style_reformatted_columns)
 
     # pre-process of name uniqueness
     duplicate_column_names = find_reformat_none_unique(style_reformatted_columns)
@@ -185,7 +185,7 @@ def sanitize_column_names(df):
     # pre-process of backward compatibility
     compatible_columns = apply_compatible_mapping_name(style_reformatted_columns, duplicate_column_names)
 
-    return df.rename(columns=compatible_columns), df_style_reformat_only
+    return df.rename(columns=compatible_columns)
 
 
 def main():
@@ -218,7 +218,7 @@ def main():
 
     # load the csv into bigquery
     df = pd.read_csv(args.csv_file)
-    sanitized_df, sanitized_df_style_reformat_only = sanitize_column_names(df)
+    sanitized_df = sanitize_column_names(df)
 
     if args.upload:
         upload_dataframe_to_bigquery(
@@ -228,6 +228,7 @@ def main():
         print("Dry-run mode. Data will not be uploaded.")
         print("Column names (as-is):")
         print(df.columns)
+        print("")
         print("Column names (to-be):")
         print(sanitized_df.columns)
 
