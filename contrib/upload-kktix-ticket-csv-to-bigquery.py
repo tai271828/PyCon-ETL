@@ -260,12 +260,19 @@ class Test2020Ticket(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.df = pd.read_csv("/home/tai271828/work-my-projects/pycontw-projects/PyCon-ETL-working/"
-                             "corporate-attendees.csv")
+        cls.df = pd.read_csv("./data/corporate-attendees.csv")
         cls.sanitized_df = sanitize_column_names(cls.df)
 
     def test_column_number(self):
         assert len(self.sanitized_df.columns) == 25
+
+    def test_column_title_content(self):
+        for column in self.sanitized_df.columns:
+            if column not in CANONICAL_COLUMN_NAMES:
+                assert False
+
+    def test_column_content(self):
+        assert self.sanitized_df["ticket_type"][1] == "Regular 原價"
 
 
 if __name__ == "__main__":
