@@ -2,6 +2,8 @@
 import argparse
 import re
 
+import unittest
+
 import pandas as pd
 from google.cloud import bigquery
 
@@ -116,19 +118,9 @@ def find_reformat_none_unique(columns):
     return result
 
 
-def apply_compatible_mapping_name(columns, reverse_dict=None):
+def apply_compatible_mapping_name(columns):
     """Unify names with a heuristic hash table"""
-    # columns_not_in_canonical_column_names = set()
-    #
-    # for value in columns.values():
-    #     if value not in CANONICAL_COLUMN_NAMES:
-    #         columns_not_in_canonical_column_names.add(value)
-
     updated_columns = apply_heuristic_name(columns)
-
-    for key, value in updated_columns.items():
-        if value not in CANONICAL_COLUMN_NAMES:
-            print(key, value)
 
     return updated_columns
 
@@ -183,7 +175,7 @@ def sanitize_column_names(df):
     duplicate_column_names = find_reformat_none_unique(style_reformatted_columns)
 
     # pre-process of backward compatibility
-    compatible_columns = apply_compatible_mapping_name(style_reformatted_columns, duplicate_column_names)
+    compatible_columns = apply_compatible_mapping_name(style_reformatted_columns)
 
     return df.rename(columns=compatible_columns)
 
@@ -233,6 +225,47 @@ def main():
         print(sanitized_df.columns)
 
     return sanitized_df.columns
+
+
+class Test2020Ticket(unittest.TestCase):
+    """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
+
+    CANONICAL_COLUMN_NAMES_2020 = [
+        'ticket_type',
+        'payment_status',
+        'tags',
+        'paid_date',
+        'price',
+        'invoice_policy',
+        'invoiced_company_name_optional',
+        'unified_business_no_optional',
+        'dietary_habit',
+        'years_of_using_python',
+        'area_of_interest',
+        'organization',
+        'job_role',
+        'country_or_region',
+        'departure_from_region',
+        'how_did_you_know_pycon_tw',
+        'have_you_ever_attended_pycon_tw',
+        'do_you_know_we_have_financial_aid_this_year',
+        'gender',
+        'pynight_attendee_numbers',
+        'pynight_attending_or_not',
+        'email_from_sponsor',
+        'email_to_sponsor',
+        'privacy_policy_of_pycon_tw',
+        'ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw'
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.df = pd.read_csv("/home/tai271828/work-my-projects/pycontw-projects/PyCon-ETL-working/"
+                             "corporate-attendees.csv")
+        cls.sanitized_df = sanitize_column_names(cls.df)
+
+    def test_column_number(self):
+        assert len(self.sanitized_df.columns) == 25
 
 
 if __name__ == "__main__":
