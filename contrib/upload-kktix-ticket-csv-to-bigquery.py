@@ -15,42 +15,45 @@ CANONICAL_COLUMN_NAMES = [
     'paid_date',
     'price',
     'invoice_policy',
-    'invoiced_company_name_optional',
-    'unified_business_no_optional',
+    'invoiced_company_name',
+    'unified_business_no',
     'dietary_habit',
     'years_of_using_python',
     'area_of_interest',
     'organization',
-    'job_role',
+    'job_title',
     'country_or_region',
     'departure_from_region',
     'how_did_you_know_pycon_tw',
     'have_you_ever_attended_pycon_tw',
-    'do_you_know_we_have_financial_aid_this_year',
+    'know_financial_aid',
     'gender',
     'pynight_attendee_numbers',
     'pynight_attending_or_not',
     'email_from_sponsor',
     'email_to_sponsor',
-    'privacy_policy_of_pycon_tw',
+    'ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw',
     'ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw',
-    "contact_email",
+    "email",
 ]
 
 HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     # from 2020 reformatted column names
     'years_of_using_python_python': "years_of_using_python",
     'company_for_students_or_teachers_fill_in_the_school_department_name': "organization",
-    'job_title_if_you_are_a_student_fill_in_student': "job_role",
+    "invoiced_company_name_optional": "invoiced_company_name",
+    "unified_business_no_optional": "unified_business_no",
+    'job_title_if_you_are_a_student_fill_in_student': "job_title",
     'come_from': "country_or_region",
     'departure_from_regions': "departure_from_region",
     'how_did_you_find_out_pycon_tw_pycon_tw': "how_did_you_know_pycon_tw",
     'have_you_ever_attended_pycon_tw_pycon_tw': "have_you_ever_attended_pycon_tw",
     'privacy_policy_of_pycon_tw_2020_pycon_tw_2020_bitly3eipaut': "privacy_policy_of_pycon_tw",
-    'ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw_2020':
+    'ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw_2020_pycon_tw_2020':
         "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
     "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw_2020_pycon_tw_2020_covid19":
         "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
+    "do_you_know_we_have_financial_aid_this_year": "know_financial_aid",
     "contact_email": "email",
     # from 2020 reformatted column names which made it duplicate
     "PyNight 參加意願僅供統計人數，實際是否舉辦需由官方另行公告": "pynight_attendee_numbers",
@@ -268,11 +271,12 @@ class Test2020Ticket(unittest.TestCase):
         cls.sanitized_df = sanitize_column_names(cls.df)
 
     def test_column_number(self):
-        assert len(self.sanitized_df.columns) == 28
+        assert len(self.sanitized_df.columns) == 26
 
     def test_column_title_content(self):
         for column in self.sanitized_df.columns:
             if column not in CANONICAL_COLUMN_NAMES:
+                print(f"{column} is not in the canonical table.")
                 assert False
 
     def test_column_content(self):
