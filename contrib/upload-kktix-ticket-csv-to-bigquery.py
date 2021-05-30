@@ -33,7 +33,8 @@ CANONICAL_COLUMN_NAMES = [
     'email_from_sponsor',
     'email_to_sponsor',
     'privacy_policy_of_pycon_tw',
-    'ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw'
+    'ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw',
+    "contact_email",
 ]
 
 HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
@@ -48,6 +49,9 @@ HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     'privacy_policy_of_pycon_tw_2020_pycon_tw_2020_bitly3eipaut': "privacy_policy_of_pycon_tw",
     'ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw_2020':
         "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
+    "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw_2020_pycon_tw_2020_covid19":
+        "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
+    "contact_email": "email",
     # from 2020 reformatted column names which made it duplicate
     "PyNight 參加意願僅供統計人數，實際是否舉辦需由官方另行公告": "pynight_attendee_numbers",
     "PyNight 參加意願": "pynight_attending_or_not",
@@ -264,7 +268,7 @@ class Test2020Ticket(unittest.TestCase):
         cls.sanitized_df = sanitize_column_names(cls.df)
 
     def test_column_number(self):
-        assert len(self.sanitized_df.columns) == 25
+        assert len(self.sanitized_df.columns) == 28
 
     def test_column_title_content(self):
         for column in self.sanitized_df.columns:
