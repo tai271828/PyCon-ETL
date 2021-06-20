@@ -267,25 +267,26 @@ class Test2020Ticket(unittest.TestCase):
         "paid_date",
         "price",
         "invoice_policy",
-        "invoiced_company_name_optional",
-        "unified_business_no_optional",
+        "invoiced_company_name",
+        "unified_business_no",
         "dietary_habit",
         "years_of_using_python",
         "area_of_interest",
         "organization",
-        "job_role",
+        "job_title",
         "country_or_region",
         "departure_from_region",
         "how_did_you_know_pycon_tw",
         "have_you_ever_attended_pycon_tw",
-        "do_you_know_we_have_financial_aid_this_year",
+        "know_financial_aid",
         "gender",
         "pynight_attendee_numbers",
         "pynight_attending_or_not",
         "email_from_sponsor",
         "email_to_sponsor",
-        "privacy_policy_of_pycon_tw",
+        "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
         "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
+        "email",
     ]
 
     @classmethod
@@ -298,7 +299,7 @@ class Test2020Ticket(unittest.TestCase):
 
     def test_column_title_content(self):
         for column in self.sanitized_df.columns:
-            if column not in CANONICAL_COLUMN_NAMES:
+            if column not in self.CANONICAL_COLUMN_NAMES_2020:
                 logging.info(f"{column} is not in the canonical table.")
                 assert False
 
