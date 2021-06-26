@@ -385,5 +385,66 @@ class Test2019Ticket(unittest.TestCase):
         )
 
 
+class Test2018Ticket(unittest.TestCase):
+    """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
+
+    CANONICAL_COLUMN_NAMES_2018 = [
+        "registration_no",
+        "ticket_type",
+        "payment_status",
+        "tags",
+        "paid_date",
+        "price",
+        "invoice_policy",
+        "invoiced_company_name",
+        "unified_business_no",
+        "dietary_habit",
+        "need_shuttle_bus_service",
+        "size_of_tshirt_t",
+        "years_of_using_python",
+        "area_of_interest",
+        "organization",
+        "job_title",
+        "country_or_region",
+        "gender",
+        "email",
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.df = pd.read_csv("./data/corporate-attendees-2018.csv")
+        cls.sanitized_df = sanitize_column_names(cls.df)
+
+    def test_column_number(self):
+        self.assertEqual(len(self.sanitized_df.columns), 18)
+
+    def test_column_title_content(self):
+        for column in self.sanitized_df.columns:
+            self.assertIn(
+                column,
+                self.CANONICAL_COLUMN_NAMES_2018,
+                f"{column} is not in {self.CANONICAL_COLUMN_NAMES_2018}",
+            )
+
+    def test_column_content(self):
+        self.assertEqual(self.sanitized_df["ticket_type"][1], "Regular 原價")
+
+    def test_hash(self):
+        string_hashed = hash_string("1234567890-=qwertyuiop[]")
+
+        self.assertEqual(
+            string_hashed,
+            "aefefa43927b374a9af62ab60e4512e86f974364919d1b09d0013254c667e512",
+        )
+
+    def test_hash_email(self):
+        hash_privacy_info(self.sanitized_df)
+
+        self.assertEqual(
+            self.sanitized_df["email"][1],
+            "ec73297d87e346ca7762644c07a61db9458a173063c7658cb1f71d662ab85564",
+        )
+
+
 if __name__ == "__main__":
     main()
