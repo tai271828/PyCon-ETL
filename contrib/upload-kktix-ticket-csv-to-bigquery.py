@@ -58,6 +58,8 @@ HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     "PyNight 參加意願": "pynight_attending_or_not",
     "是否願意收到贊助商轉發 Email 訊息": "email_from_sponsor",
     "是否願意提供 Email 給贊助商": "email_to_sponsor",
+    # from 2018 reformatted column names
+    "size_of_tshirt_t": "size_of_tshirt",
 }
 
 
@@ -339,7 +341,7 @@ class Test2019Ticket(unittest.TestCase):
         "unified_business_no",
         "dietary_habit",
         "need_shuttle_bus_service",
-        "size_of_tshirt_t",
+        "size_of_tshirt",
         "years_of_using_python",
         "area_of_interest",
         "organization",
@@ -400,7 +402,7 @@ class Test2018Ticket(unittest.TestCase):
         "unified_business_no",
         "dietary_habit",
         "need_shuttle_bus_service",
-        "size_of_tshirt_t",
+        "size_of_tshirt",
         "years_of_using_python",
         "area_of_interest",
         "organization",
