@@ -37,6 +37,96 @@ CANONICAL_COLUMN_NAMES = [
     "email",
 ]
 
+CANONICAL_COLUMN_NAMES_CORE = [
+    "invoice_policy",
+    "paid_date",
+    "unified_business_no",
+    "area_of_interest",
+    "payment_status",
+    "country_or_region",
+    "job_title",
+    "ticket_type",
+    "email",
+    "organization",
+    "price",
+    "dietary_habit",
+    "gender",
+    "years_of_using_python",
+    "invoiced_company_name",
+]
+
+
+CANONICAL_COLUMN_NAMES_2020 = [
+    "ticket_type",
+    "payment_status",
+    "tags",
+    "paid_date",
+    "price",
+    "invoice_policy",
+    "invoiced_company_name",
+    "unified_business_no",
+    "dietary_habit",
+    "years_of_using_python",
+    "area_of_interest",
+    "organization",
+    "job_title",
+    "country_or_region",
+    "departure_from_region",
+    "how_did_you_know_pycon_tw",
+    "have_you_ever_attended_pycon_tw",
+    "know_financial_aid",
+    "gender",
+    "pynight_attendee_numbers",
+    "pynight_attending_or_not",
+    "email_from_sponsor",
+    "email_to_sponsor",
+    "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
+    "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
+    "email",
+]
+
+CANONICAL_COLUMN_NAMES_2019 = [
+    "ticket_type",
+    "payment_status",
+    "tags",
+    "paid_date",
+    "price",
+    "invoice_policy",
+    "invoiced_company_name",
+    "unified_business_no",
+    "dietary_habit",
+    "need_shuttle_bus_service",
+    "size_of_tshirt",
+    "years_of_using_python",
+    "area_of_interest",
+    "organization",
+    "job_title",
+    "country_or_region",
+    "gender",
+    "email",
+]
+
+CANONICAL_COLUMN_NAMES_2018 = [
+    "registration_no",
+    "ticket_type",
+    "payment_status",
+    "paid_date",
+    "price",
+    "invoice_policy",
+    "invoiced_company_name",
+    "unified_business_no",
+    "dietary_habit",
+    "need_shuttle_bus_service",
+    "size_of_tshirt",
+    "years_of_using_python",
+    "area_of_interest",
+    "organization",
+    "job_title",
+    "country_or_region",
+    "gender",
+    "email",
+]
+
 HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     # from 2020 reformatted column names
     "years_of_using_python_python": "years_of_using_python",
@@ -259,37 +349,25 @@ def main():
     return sanitized_df.columns
 
 
-class Test2020Ticket(unittest.TestCase):
+class TestCrossYear(unittest.TestCase):
     """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
 
-    CANONICAL_COLUMN_NAMES_2020 = [
-        "ticket_type",
-        "payment_status",
-        "tags",
-        "paid_date",
-        "price",
-        "invoice_policy",
-        "invoiced_company_name",
-        "unified_business_no",
-        "dietary_habit",
-        "years_of_using_python",
-        "area_of_interest",
-        "organization",
-        "job_title",
-        "country_or_region",
-        "departure_from_region",
-        "how_did_you_know_pycon_tw",
-        "have_you_ever_attended_pycon_tw",
-        "know_financial_aid",
-        "gender",
-        "pynight_attendee_numbers",
-        "pynight_attending_or_not",
-        "email_from_sponsor",
-        "email_to_sponsor",
-        "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
-        "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
-        "email",
-    ]
+    def test_columns_intersection(self):
+        set_2020 = set(CANONICAL_COLUMN_NAMES_2020)
+        set_2019 = set(CANONICAL_COLUMN_NAMES_2019)
+        set_2018 = set(CANONICAL_COLUMN_NAMES_2018)
+        set_intersection_cross_year = set_2020.intersection(
+            set_2019.intersection(set_2018)
+        )
+
+        set_core = set(CANONICAL_COLUMN_NAMES_CORE)
+
+        self.assertFalse(set_intersection_cross_year.difference(set_core))
+        self.assertFalse(set_core.difference(set_intersection_cross_year))
+
+
+class Test2020Ticket(unittest.TestCase):
+    """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
 
     @classmethod
     def setUpClass(cls):
@@ -300,12 +378,12 @@ class Test2020Ticket(unittest.TestCase):
         self.assertEqual(len(self.sanitized_df.columns), 26)
 
     def test_column_title_content(self):
-        for column in self.sanitized_df.columns:
-            self.assertIn(
-                column,
-                self.CANONICAL_COLUMN_NAMES_2020,
-                f"{column} is not in {self.CANONICAL_COLUMN_NAMES_2020}",
-            )
+        set_target = set(self.sanitized_df.columns)
+        set_expected = set(CANONICAL_COLUMN_NAMES_2020)
+        set_union = set_target.union(set_expected)
+
+        self.assertFalse(set_union.difference(set_target))
+        self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
         self.assertEqual(self.sanitized_df["ticket_type"][1], "Regular 原價")
@@ -330,27 +408,6 @@ class Test2020Ticket(unittest.TestCase):
 class Test2019Ticket(unittest.TestCase):
     """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
 
-    CANONICAL_COLUMN_NAMES_2019 = [
-        "ticket_type",
-        "payment_status",
-        "tags",
-        "paid_date",
-        "price",
-        "invoice_policy",
-        "invoiced_company_name",
-        "unified_business_no",
-        "dietary_habit",
-        "need_shuttle_bus_service",
-        "size_of_tshirt",
-        "years_of_using_python",
-        "area_of_interest",
-        "organization",
-        "job_title",
-        "country_or_region",
-        "gender",
-        "email",
-    ]
-
     @classmethod
     def setUpClass(cls):
         cls.df = pd.read_csv("./data/corporate-attendees-2019.csv")
@@ -360,12 +417,12 @@ class Test2019Ticket(unittest.TestCase):
         self.assertEqual(len(self.sanitized_df.columns), 18)
 
     def test_column_title_content(self):
-        for column in self.sanitized_df.columns:
-            self.assertIn(
-                column,
-                self.CANONICAL_COLUMN_NAMES_2019,
-                f"{column} is not in {self.CANONICAL_COLUMN_NAMES_2019}",
-            )
+        set_target = set(self.sanitized_df.columns)
+        set_expected = set(CANONICAL_COLUMN_NAMES_2019)
+        set_union = set_target.union(set_expected)
+
+        self.assertFalse(set_union.difference(set_target))
+        self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
         self.assertEqual(self.sanitized_df["ticket_type"][1], "Regular 原價")
@@ -390,28 +447,6 @@ class Test2019Ticket(unittest.TestCase):
 class Test2018Ticket(unittest.TestCase):
     """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
 
-    CANONICAL_COLUMN_NAMES_2018 = [
-        "registration_no",
-        "ticket_type",
-        "payment_status",
-        "tags",
-        "paid_date",
-        "price",
-        "invoice_policy",
-        "invoiced_company_name",
-        "unified_business_no",
-        "dietary_habit",
-        "need_shuttle_bus_service",
-        "size_of_tshirt",
-        "years_of_using_python",
-        "area_of_interest",
-        "organization",
-        "job_title",
-        "country_or_region",
-        "gender",
-        "email",
-    ]
-
     @classmethod
     def setUpClass(cls):
         cls.df = pd.read_csv("./data/corporate-attendees-2018.csv")
@@ -421,12 +456,12 @@ class Test2018Ticket(unittest.TestCase):
         self.assertEqual(len(self.sanitized_df.columns), 18)
 
     def test_column_title_content(self):
-        for column in self.sanitized_df.columns:
-            self.assertIn(
-                column,
-                self.CANONICAL_COLUMN_NAMES_2018,
-                f"{column} is not in {self.CANONICAL_COLUMN_NAMES_2018}",
-            )
+        set_target = set(self.sanitized_df.columns)
+        set_expected = set(CANONICAL_COLUMN_NAMES_2018)
+        set_union = set_target.union(set_expected)
+
+        self.assertFalse(set_union.difference(set_target))
+        self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
         self.assertEqual(self.sanitized_df["ticket_type"][1], "Regular 原價")
