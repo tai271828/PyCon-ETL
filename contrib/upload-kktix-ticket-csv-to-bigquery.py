@@ -152,6 +152,16 @@ HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     "size_of_tshirt_t": "size_of_tshirt",
 }
 
+UNWANTED_DATA_TO_UPLOAD = [
+    "Id",
+    "Order Number",
+    "Checkin Code",
+    "QR Code Serial No.",
+    "Nickname / 暱稱 (Shown on Badge)",
+    "Contact Name",
+    "Contact Mobile",
+]
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -249,6 +259,20 @@ def init_rename_column_dict(columns_array: pd.core.indexes.base.Index) -> dict:
     return columns_dict
 
 
+def strip_unwanted_columns(df: pd.DataFrame) -> pd.DataFrame:
+    columns_to_strip = []
+    for column_name in UNWANTED_DATA_TO_UPLOAD:
+        if column_name in df.columns:
+            columns_to_strip.append(column_name)
+
+    if columns_to_strip:
+        stripped_df = df.drop(columns=columns_to_strip)
+    else:
+        stripped_df = df
+
+    return stripped_df
+
+
 def sanitize_column_names(df: pd.DataFrame) -> pd.DataFrame:
     """
     Pre-process the column names of raw data
@@ -264,7 +288,8 @@ def sanitize_column_names(df: pd.DataFrame) -> pd.DataFrame:
         2. a column name SHOULD be unique
         3. backward compatible with column names in the past years
     """
-    rename_column_dict = init_rename_column_dict(df.columns)
+    df_stripped_unwanted = strip_unwanted_columns(df)
+    rename_column_dict = init_rename_column_dict(df_stripped_unwanted.columns)
 
     # apply possible heuristic name if possible
     # this is mainly meant to resolve style-reformatted names duplicate conflicts
@@ -283,7 +308,7 @@ def sanitize_column_names(df: pd.DataFrame) -> pd.DataFrame:
     # pre-process of backward compatibility
     compatible_columns = apply_compatible_mapping_name(style_reformatted_columns)
 
-    return df.rename(columns=compatible_columns)
+    return df_stripped_unwanted.rename(columns=compatible_columns)
 
 
 def hash_string(string_to_hash: str) -> str:
