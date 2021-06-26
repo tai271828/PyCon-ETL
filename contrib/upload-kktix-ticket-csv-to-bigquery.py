@@ -125,6 +125,8 @@ CANONICAL_COLUMN_NAMES_2018 = [
     "country_or_region",
     "gender",
     "email",
+    "tags",
+    "attendance_book",
 ]
 
 HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
@@ -378,11 +380,13 @@ class TestCrossYear(unittest.TestCase):
     """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
 
     def test_columns_intersection(self):
+        set_extra = {"tags"}
+
         set_2020 = set(CANONICAL_COLUMN_NAMES_2020)
         set_2019 = set(CANONICAL_COLUMN_NAMES_2019)
         set_2018 = set(CANONICAL_COLUMN_NAMES_2018)
         set_intersection_cross_year = set_2020.intersection(
-            set_2019.intersection(set_2018)
+            set_2019.intersection(set_2018.difference(set_extra))
         )
 
         set_core = set(CANONICAL_COLUMN_NAMES_CORE)
@@ -478,7 +482,7 @@ class Test2018Ticket(unittest.TestCase):
         cls.sanitized_df = sanitize_column_names(cls.df)
 
     def test_column_number(self):
-        self.assertEqual(len(self.sanitized_df.columns), 18)
+        self.assertEqual(20, len(self.sanitized_df.columns))
 
     def test_column_title_content(self):
         set_target = set(self.sanitized_df.columns)
@@ -503,8 +507,8 @@ class Test2018Ticket(unittest.TestCase):
         hash_privacy_info(self.sanitized_df)
 
         self.assertEqual(
+            "7fcedd1de57031e2ae316754ff211088a1b08c4a9112676478ac5a6bf0f95131",
             self.sanitized_df["email"][1],
-            "ec73297d87e346ca7762644c07a61db9458a173063c7658cb1f71d662ab85564",
         )
 
 
