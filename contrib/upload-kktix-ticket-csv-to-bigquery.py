@@ -415,11 +415,11 @@ class Test2020Ticket(unittest.TestCase):
         self.assertEqual(29, len(self.sanitized_df.columns))
 
     def test_column_title_content(self):
-        set_target = set(self.sanitized_df.columns)
+        set_actual = set(self.sanitized_df.columns)
         set_expected = set(CANONICAL_COLUMN_NAMES_2020)
-        set_union = set_target.union(set_expected)
+        set_union = set_actual.union(set_expected)
 
-        self.assertFalse(set_union.difference(set_target))
+        self.assertFalse(set_union.difference(set_actual))
         self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
@@ -454,11 +454,11 @@ class Test2019Ticket(unittest.TestCase):
         self.assertEqual(20, len(self.sanitized_df.columns))
 
     def test_column_title_content(self):
-        set_target = set(self.sanitized_df.columns)
+        set_actual = set(self.sanitized_df.columns)
         set_expected = set(CANONICAL_COLUMN_NAMES_2019)
-        set_union = set_target.union(set_expected)
+        set_union = set_actual.union(set_expected)
 
-        self.assertFalse(set_union.difference(set_target))
+        self.assertFalse(set_union.difference(set_actual))
         self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
@@ -493,11 +493,11 @@ class Test2018Ticket(unittest.TestCase):
         self.assertEqual(20, len(self.sanitized_df.columns))
 
     def test_column_title_content(self):
-        set_target = set(self.sanitized_df.columns)
+        set_actual = set(self.sanitized_df.columns)
         set_expected = set(CANONICAL_COLUMN_NAMES_2018)
-        set_union = set_target.union(set_expected)
+        set_union = set_actual.union(set_expected)
 
-        self.assertFalse(set_union.difference(set_target))
+        self.assertFalse(set_union.difference(set_actual))
         self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
