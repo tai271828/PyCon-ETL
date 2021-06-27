@@ -104,6 +104,8 @@ CANONICAL_COLUMN_NAMES_2019 = [
     "country_or_region",
     "gender",
     "email",
+    "registration_no",
+    "attendance_book",
 ]
 
 CANONICAL_COLUMN_NAMES_2018 = [
@@ -443,7 +445,7 @@ class Test2019Ticket(unittest.TestCase):
         cls.sanitized_df = sanitize_column_names(cls.df)
 
     def test_column_number(self):
-        self.assertEqual(len(self.sanitized_df.columns), 18)
+        self.assertEqual(20, len(self.sanitized_df.columns))
 
     def test_column_title_content(self):
         set_target = set(self.sanitized_df.columns)
@@ -468,8 +470,8 @@ class Test2019Ticket(unittest.TestCase):
         hash_privacy_info(self.sanitized_df)
 
         self.assertEqual(
+            "7fcedd1de57031e2ae316754ff211088a1b08c4a9112676478ac5a6bf0f95131",
             self.sanitized_df["email"][1],
-            "bd48b12afbfd15ed6b308e7aeb0d76168b7973efd0d1c31838d0a756b094c446",
         )
 
 
