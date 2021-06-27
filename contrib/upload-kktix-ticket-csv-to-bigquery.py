@@ -423,7 +423,7 @@ class Test2020Ticket(unittest.TestCase):
         self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
-        self.assertEqual(self.sanitized_df["ticket_type"][1], "Regular 原價")
+        self.assertEqual("Regular 原價", self.sanitized_df["ticket_type"][1])
 
     def test_hash(self):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
@@ -462,7 +462,7 @@ class Test2019Ticket(unittest.TestCase):
         self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
-        self.assertEqual(self.sanitized_df["ticket_type"][1], "Regular 原價")
+        self.assertEqual("Regular 原價", self.sanitized_df["ticket_type"][1])
 
     def test_hash(self):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
@@ -501,14 +501,14 @@ class Test2018Ticket(unittest.TestCase):
         self.assertFalse(set_union.difference(set_expected))
 
     def test_column_content(self):
-        self.assertEqual(self.sanitized_df["ticket_type"][1], "Regular 原價")
+        self.assertEqual("Regular 原價", self.sanitized_df["ticket_type"][1])
 
     def test_hash(self):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
 
         self.assertEqual(
-            string_hashed,
             "aefefa43927b374a9af62ab60e4512e86f974364919d1b09d0013254c667e512",
+            string_hashed,
         )
 
     def test_hash_email(self):
