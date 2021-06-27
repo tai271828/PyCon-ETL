@@ -67,18 +67,13 @@ CANONICAL_COLUMN_NAMES_2020 = [
     "job_title",
     "country_or_region",
     "departure_from_region",
-    "how_did_you_know_pycon_tw",
-    "have_you_ever_attended_pycon_tw",
-    "know_financial_aid",
     "gender",
-    "pynight_attendee_numbers",
-    "pynight_attending_or_not",
     "email_from_sponsor",
     "email_to_sponsor",
+    "privacy_policy_of_pycon_tw",
     "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
     "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
     "email",
-    "privacy_policy_of_pycon_tw",
     "registration_no",
     "attendance_book",
 ]
@@ -87,7 +82,22 @@ CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE = [
     "invoice_policy",
     "invoiced_company_name",
     "unified_business_no",
+    "pynight_attendee_numbers",
+    "know_financial_aid",
+    "have_you_ever_attended_pycon_tw",
+    "pynight_attending_or_not",
+    "how_did_you_know_pycon_tw",
 ]
+
+CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL = [
+    "pynight_attendee_numbers",
+    "know_financial_aid",
+    "have_you_ever_attended_pycon_tw",
+    "pynight_attending_or_not",
+    "how_did_you_know_pycon_tw",
+]
+
+CANONICAL_COLUMN_NAMES_2020_EXTRA_RESERVED = []
 
 CANONICAL_COLUMN_NAMES_2019 = [
     "ticket_type",
@@ -146,6 +156,7 @@ HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     "departure_from_regions": "departure_from_region",
     "how_did_you_find_out_pycon_tw_pycon_tw": "how_did_you_know_pycon_tw",
     "have_you_ever_attended_pycon_tw_pycon_tw": "have_you_ever_attended_pycon_tw",
+    "privacy_policy_of_pycon_tw_2020": "privacy_policy_of_pycon_tw",
     "privacy_policy_of_pycon_tw_2020_pycon_tw_2020_bitly3eipaut": "privacy_policy_of_pycon_tw",
     "ive_already_read_and_i_accept_the_privacy_policy_of_pycontw_2020_pycon_tw_2020": "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
     "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw_2020_pycon_tw_2020": "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
@@ -171,6 +182,7 @@ UNWANTED_DATA_TO_UPLOAD = [
     "Contact Name",
     "Contact Mobile",
     "Epidemic Prevention of PyCon TW 2020 / PyCon TW 2020 COVID-19 防疫守則 bit.ly/3fcnhu2",
+    "Epidemic Prevention of PyCon TW 2020",
 ]
 
 
@@ -416,11 +428,17 @@ class Test2020Ticket(unittest.TestCase):
         cls.df_individual = pd.read_csv("./data/individual-attendees-2020.csv")
         cls.sanitized_df_individual = sanitize_column_names(cls.df_individual)
 
+        cls.df_reserved = pd.read_csv("./data/reserved-attendees-2020.csv")
+        cls.sanitized_df_reserved = sanitize_column_names(cls.df_reserved)
+
     def test_column_number_corporate(self):
         self.assertEqual(29, len(self.sanitized_df.columns))
 
     def test_column_number_individual(self):
         self.assertEqual(26, len(self.sanitized_df_individual.columns))
+
+    def test_column_number_reserved(self):
+        self.assertEqual(21, len(self.sanitized_df_reserved.columns))
 
     def test_column_title_content_all(selfs):
         pass
@@ -435,6 +453,14 @@ class Test2020Ticket(unittest.TestCase):
 
     def test_column_title_content_individual(self):
         set_actual = set(self.sanitized_df_individual.columns)
+        set_expected = set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
+        set_union = set_actual.union(set_expected)
+
+        self.assertFalse(set_union.difference(set_actual))
+        self.assertFalse(set_union.difference(set_expected))
+
+    def test_column_title_content_reserved(self):
+        set_actual = set(self.sanitized_df_reserved.columns)
         set_expected = set(CANONICAL_COLUMN_NAMES_2020)
         set_union = set_actual.union(set_expected)
 
