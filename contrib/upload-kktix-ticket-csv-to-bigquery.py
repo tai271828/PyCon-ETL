@@ -447,8 +447,13 @@ class Test2020Ticket(unittest.TestCase):
     def test_column_number_reserved(self):
         self.assertEqual(20, len(self.sanitized_df_reserved.columns))
 
-    def test_column_title_content_all(selfs):
-        pass
+    def test_column_title_content_all(self):
+        self.assertEqual(len(self.sanitized_df_corporate.columns),
+                         len(CANONICAL_COLUMN_NAMES_2020) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
+        self.assertEqual(len(self.sanitized_df_individual.columns),
+                         len(CANONICAL_COLUMN_NAMES_2020) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
+        self.assertEqual(len(self.sanitized_df_reserved.columns),
+                         len(CANONICAL_COLUMN_NAMES_2020) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_RESERVED))
 
     def test_column_title_content_corporate(self):
         self.compare_column_set(
