@@ -432,6 +432,12 @@ class Test2020Ticket(unittest.TestCase):
         cls.df_reserved = pd.read_csv("./data/reserved-attendees-2020.csv")
         cls.sanitized_df_reserved = sanitize_column_names(cls.df_reserved)
 
+    def compare_column_set(self, set_actual, set_expected):
+        set_union = set_actual.union(set_expected)
+
+        self.assertFalse(set_union.difference(set_actual))
+        self.assertFalse(set_union.difference(set_expected))
+
     def test_column_number_corporate(self):
         self.assertEqual(28, len(self.sanitized_df_corporate.columns))
 
@@ -445,28 +451,22 @@ class Test2020Ticket(unittest.TestCase):
         pass
 
     def test_column_title_content_corporate(self):
-        set_actual = set(self.sanitized_df_corporate.columns)
-        set_expected = set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
-        set_union = set_actual.union(set_expected)
-
-        self.assertFalse(set_union.difference(set_actual))
-        self.assertFalse(set_union.difference(set_expected))
+        self.compare_column_set(
+            set(self.sanitized_df_corporate.columns),
+            set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
+        )
 
     def test_column_title_content_individual(self):
-        set_actual = set(self.sanitized_df_individual.columns)
-        set_expected = set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
-        set_union = set_actual.union(set_expected)
-
-        self.assertFalse(set_union.difference(set_actual))
-        self.assertFalse(set_union.difference(set_expected))
+        self.compare_column_set(
+            set(self.sanitized_df_individual.columns),
+            set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
+        )
 
     def test_column_title_content_reserved(self):
-        set_actual = set(self.sanitized_df_reserved.columns)
-        set_expected = set(CANONICAL_COLUMN_NAMES_2020)
-        set_union = set_actual.union(set_expected)
-
-        self.assertFalse(set_union.difference(set_actual))
-        self.assertFalse(set_union.difference(set_expected))
+        self.compare_column_set(
+            set(self.sanitized_df_reserved.columns),
+            set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_RESERVED))
+        )
 
     def test_column_content_corporate(self):
         self.assertEqual("Regular 原價", self.sanitized_df_corporate["ticket_type"][1])
@@ -508,6 +508,7 @@ class Test2020Ticket(unittest.TestCase):
             "fc5008329367fe025e138088e9ae5b316d91e8c1939158133f6d2bc937003877",
             self.sanitized_df_individual["email"][1],
         )
+
 
 class Test2019Ticket(unittest.TestCase):
     """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
