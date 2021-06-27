@@ -54,7 +54,7 @@ CANONICAL_COLUMN_NAMES_CORE = [
 ]
 
 
-CANONICAL_COLUMN_NAMES_2020 = [
+CANONICAL_COLUMN_NAMES_2020_CORE = [
     "ticket_type",
     "payment_status",
     "tags",
@@ -405,7 +405,7 @@ class TestCrossYear(unittest.TestCase):
     def test_columns_intersection(self):
         set_extra = {"tags", "attendance_book"}
 
-        set_2020 = set(CANONICAL_COLUMN_NAMES_2020)
+        set_2020 = set(CANONICAL_COLUMN_NAMES_2020_CORE)
         set_2019 = set(CANONICAL_COLUMN_NAMES_2019)
         set_2018 = set(CANONICAL_COLUMN_NAMES_2018)
         set_intersection_cross_year = set_2020.intersection(
@@ -449,28 +449,28 @@ class Test2020Ticket(unittest.TestCase):
 
     def test_column_title_content_all(self):
         self.assertEqual(len(self.sanitized_df_corporate.columns),
-                         len(CANONICAL_COLUMN_NAMES_2020) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
+                         len(CANONICAL_COLUMN_NAMES_2020_CORE) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
         self.assertEqual(len(self.sanitized_df_individual.columns),
-                         len(CANONICAL_COLUMN_NAMES_2020) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
+                         len(CANONICAL_COLUMN_NAMES_2020_CORE) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
         self.assertEqual(len(self.sanitized_df_reserved.columns),
-                         len(CANONICAL_COLUMN_NAMES_2020) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_RESERVED))
+                         len(CANONICAL_COLUMN_NAMES_2020_CORE) + len(CANONICAL_COLUMN_NAMES_2020_EXTRA_RESERVED))
 
     def test_column_title_content_corporate(self):
         self.compare_column_set(
             set(self.sanitized_df_corporate.columns),
-            set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
+            set(CANONICAL_COLUMN_NAMES_2020_CORE).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
         )
 
     def test_column_title_content_individual(self):
         self.compare_column_set(
             set(self.sanitized_df_individual.columns),
-            set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
+            set(CANONICAL_COLUMN_NAMES_2020_CORE).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_INDIVIDUAL))
         )
 
     def test_column_title_content_reserved(self):
         self.compare_column_set(
             set(self.sanitized_df_reserved.columns),
-            set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_RESERVED))
+            set(CANONICAL_COLUMN_NAMES_2020_CORE).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_RESERVED))
         )
 
     def test_column_content_corporate(self):
