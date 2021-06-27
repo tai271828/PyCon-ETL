@@ -53,6 +53,7 @@ CANONICAL_COLUMN_NAMES_CORE = [
     "gender",
     "years_of_using_python",
     "invoiced_company_name",
+    "registration_no",
 ]
 
 
@@ -83,6 +84,9 @@ CANONICAL_COLUMN_NAMES_2020 = [
     "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
     "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
     "email",
+    "privacy_policy_of_pycon_tw",
+    "registration_no",
+    "attendance_book",
 ]
 
 CANONICAL_COLUMN_NAMES_2019 = [
@@ -157,6 +161,7 @@ HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
 }
 
 UNWANTED_DATA_TO_UPLOAD = [
+    # raw column names
     "Id",
     "Order Number",
     "Checkin Code",
@@ -164,6 +169,7 @@ UNWANTED_DATA_TO_UPLOAD = [
     "Nickname / 暱稱 (Shown on Badge)",
     "Contact Name",
     "Contact Mobile",
+    "Epidemic Prevention of PyCon TW 2020 / PyCon TW 2020 COVID-19 防疫守則 bit.ly/3fcnhu2",
 ]
 
 
@@ -382,7 +388,7 @@ class TestCrossYear(unittest.TestCase):
     """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
 
     def test_columns_intersection(self):
-        set_extra = {"tags"}
+        set_extra = {"tags", "attendance_book"}
 
         set_2020 = set(CANONICAL_COLUMN_NAMES_2020)
         set_2019 = set(CANONICAL_COLUMN_NAMES_2019)
@@ -406,7 +412,7 @@ class Test2020Ticket(unittest.TestCase):
         cls.sanitized_df = sanitize_column_names(cls.df)
 
     def test_column_number(self):
-        self.assertEqual(len(self.sanitized_df.columns), 26)
+        self.assertEqual(29, len(self.sanitized_df.columns))
 
     def test_column_title_content(self):
         set_target = set(self.sanitized_df.columns)
@@ -423,16 +429,16 @@ class Test2020Ticket(unittest.TestCase):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
 
         self.assertEqual(
-            string_hashed,
             "aefefa43927b374a9af62ab60e4512e86f974364919d1b09d0013254c667e512",
+            string_hashed,
         )
 
     def test_hash_email(self):
         hash_privacy_info(self.sanitized_df)
 
         self.assertEqual(
+            "7fcedd1de57031e2ae316754ff211088a1b08c4a9112676478ac5a6bf0f95131",
             self.sanitized_df["email"][1],
-            "caecbd114bfa0cc3fd43f2a68ce52a8a92141c6bca87e0418d4833af56e504f1",
         )
 
 
@@ -462,8 +468,8 @@ class Test2019Ticket(unittest.TestCase):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
 
         self.assertEqual(
-            string_hashed,
             "aefefa43927b374a9af62ab60e4512e86f974364919d1b09d0013254c667e512",
+            string_hashed,
         )
 
     def test_hash_email(self):
