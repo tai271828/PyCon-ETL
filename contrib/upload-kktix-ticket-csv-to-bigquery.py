@@ -38,9 +38,7 @@ CANONICAL_COLUMN_NAMES = [
 ]
 
 CANONICAL_COLUMN_NAMES_CORE = [
-    "invoice_policy",
     "paid_date",
-    "unified_business_no",
     "area_of_interest",
     "payment_status",
     "country_or_region",
@@ -52,7 +50,6 @@ CANONICAL_COLUMN_NAMES_CORE = [
     "dietary_habit",
     "gender",
     "years_of_using_python",
-    "invoiced_company_name",
     "registration_no",
 ]
 
@@ -63,9 +60,6 @@ CANONICAL_COLUMN_NAMES_2020 = [
     "tags",
     "paid_date",
     "price",
-    "invoice_policy",
-    "invoiced_company_name",
-    "unified_business_no",
     "dietary_habit",
     "years_of_using_python",
     "area_of_interest",
@@ -87,6 +81,12 @@ CANONICAL_COLUMN_NAMES_2020 = [
     "privacy_policy_of_pycon_tw",
     "registration_no",
     "attendance_book",
+]
+
+CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE = [
+    "invoice_policy",
+    "invoiced_company_name",
+    "unified_business_no",
 ]
 
 CANONICAL_COLUMN_NAMES_2019 = [
@@ -147,6 +147,7 @@ HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     "how_did_you_find_out_pycon_tw_pycon_tw": "how_did_you_know_pycon_tw",
     "have_you_ever_attended_pycon_tw_pycon_tw": "have_you_ever_attended_pycon_tw",
     "privacy_policy_of_pycon_tw_2020_pycon_tw_2020_bitly3eipaut": "privacy_policy_of_pycon_tw",
+    "ive_already_read_and_i_accept_the_privacy_policy_of_pycontw_2020_pycon_tw_2020": "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
     "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw_2020_pycon_tw_2020": "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
     "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw_2020_pycon_tw_2020_covid19": "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
     "do_you_know_we_have_financial_aid_this_year": "know_financial_aid",
@@ -411,19 +412,39 @@ class Test2020Ticket(unittest.TestCase):
         cls.df = pd.read_csv("./data/corporate-attendees-2020.csv")
         cls.sanitized_df = sanitize_column_names(cls.df)
 
-    def test_column_number(self):
+        cls.df_individual = pd.read_csv("./data/individual-attendees-2020.csv")
+        cls.sanitized_df_individual = sanitize_column_names(cls.df_individual)
+
+    def test_column_number_corporate(self):
         self.assertEqual(29, len(self.sanitized_df.columns))
 
-    def test_column_title_content(self):
+    def test_column_number_individual(self):
+        self.assertEqual(26, len(self.sanitized_df_individual.columns))
+
+    def test_column_title_content_all(selfs):
+        pass
+
+    def test_column_title_content_corporate(self):
         set_actual = set(self.sanitized_df.columns)
+        set_expected = set(CANONICAL_COLUMN_NAMES_2020).union(set(CANONICAL_COLUMN_NAMES_2020_EXTRA_CORPORATE))
+        set_union = set_actual.union(set_expected)
+
+        self.assertFalse(set_union.difference(set_actual))
+        self.assertFalse(set_union.difference(set_expected))
+
+    def test_column_title_content_individual(self):
+        set_actual = set(self.sanitized_df_individual.columns)
         set_expected = set(CANONICAL_COLUMN_NAMES_2020)
         set_union = set_actual.union(set_expected)
 
         self.assertFalse(set_union.difference(set_actual))
         self.assertFalse(set_union.difference(set_expected))
 
-    def test_column_content(self):
+    def test_column_content_corporate(self):
         self.assertEqual("Regular 原價", self.sanitized_df["ticket_type"][1])
+
+    def test_column_content_individual(self):
+        self.assertEqual("Discount 優惠價", self.sanitized_df_individual["ticket_type"][1])
 
     def test_hash(self):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
@@ -435,6 +456,14 @@ class Test2020Ticket(unittest.TestCase):
 
     def test_hash_email(self):
         hash_privacy_info(self.sanitized_df)
+
+        self.assertEqual(
+            "7fcedd1de57031e2ae316754ff211088a1b08c4a9112676478ac5a6bf0f95131",
+            self.sanitized_df["email"][1],
+        )
+
+    def test_hash_email_individual(self):
+        hash_privacy_info(self.sanitized_df_individual)
 
         self.assertEqual(
             "7fcedd1de57031e2ae316754ff211088a1b08c4a9112676478ac5a6bf0f95131",
