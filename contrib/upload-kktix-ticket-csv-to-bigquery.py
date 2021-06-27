@@ -474,6 +474,9 @@ class Test2020Ticket(unittest.TestCase):
     def test_column_content_individual(self):
         self.assertEqual("Discount 優惠價", self.sanitized_df_individual["ticket_type"][1])
 
+    def test_column_content_reserved(self):
+        self.assertEqual("Contributor 貢獻者票", self.sanitized_df_reserved["ticket_type"][1])
+
     def test_hash(self):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
 
@@ -498,6 +501,13 @@ class Test2020Ticket(unittest.TestCase):
             self.sanitized_df_individual["email"][1],
         )
 
+    def test_hash_email_reserved(self):
+        hash_privacy_info(self.sanitized_df_individual)
+
+        self.assertEqual(
+            "fc5008329367fe025e138088e9ae5b316d91e8c1939158133f6d2bc937003877",
+            self.sanitized_df_individual["email"][1],
+        )
 
 class Test2019Ticket(unittest.TestCase):
     """python -m unittest upload-kktix-ticket-csv-to-bigquery.py"""
