@@ -312,9 +312,10 @@ def sanitize_column_names(df: pd.DataFrame) -> pd.DataFrame:
 
     # pre-process of name uniqueness
     duplicate_column_names = find_reformat_none_unique(style_reformatted_columns)
-    logging.info(
-        f"Found the following duplicate column names: {duplicate_column_names}"
-    )
+    if duplicate_column_names:
+        logging.error(
+            f"Found the following duplicate column names: {duplicate_column_names}"
+        )
 
     # pre-process of backward compatibility
     compatible_columns = apply_compatible_mapping_name(style_reformatted_columns)
