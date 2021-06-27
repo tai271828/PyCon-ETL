@@ -70,7 +70,6 @@ CANONICAL_COLUMN_NAMES_2020 = [
     "gender",
     "email_from_sponsor",
     "email_to_sponsor",
-    "privacy_policy_of_pycon_tw",
     "ive_already_read_and_i_accept_the_epidemic_prevention_of_pycon_tw",
     "ive_already_read_and_i_accept_the_privacy_policy_of_pycon_tw",
     "email",
@@ -183,6 +182,8 @@ UNWANTED_DATA_TO_UPLOAD = [
     "Contact Mobile",
     "Epidemic Prevention of PyCon TW 2020 / PyCon TW 2020 COVID-19 防疫守則 bit.ly/3fcnhu2",
     "Epidemic Prevention of PyCon TW 2020",
+    "Privacy Policy of PyCon TW 2020 / PyCon TW 2020 個人資料保護聲明 bit.ly/3eipAut",
+    "Privacy Policy of PyCon TW 2020",
 ]
 
 
@@ -432,13 +433,13 @@ class Test2020Ticket(unittest.TestCase):
         cls.sanitized_df_reserved = sanitize_column_names(cls.df_reserved)
 
     def test_column_number_corporate(self):
-        self.assertEqual(29, len(self.sanitized_df.columns))
+        self.assertEqual(28, len(self.sanitized_df.columns))
 
     def test_column_number_individual(self):
-        self.assertEqual(26, len(self.sanitized_df_individual.columns))
+        self.assertEqual(25, len(self.sanitized_df_individual.columns))
 
     def test_column_number_reserved(self):
-        self.assertEqual(21, len(self.sanitized_df_reserved.columns))
+        self.assertEqual(20, len(self.sanitized_df_reserved.columns))
 
     def test_column_title_content_all(selfs):
         pass
