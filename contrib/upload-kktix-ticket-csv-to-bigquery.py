@@ -128,15 +128,13 @@ CANONICAL_COLUMN_NAMES_2019_EXTRA_RESERVED = [
     "invoice_policy",
 ]
 
-CANONICAL_COLUMN_NAMES_2018 = [
+CANONICAL_COLUMN_NAMES_2018_CORE = [
     "registration_no",
     "ticket_type",
     "payment_status",
     "paid_date",
     "price",
     "invoice_policy",
-    "invoiced_company_name",
-    "unified_business_no",
     "dietary_habit",
     "need_shuttle_bus_service",
     "size_of_tshirt",
@@ -150,6 +148,17 @@ CANONICAL_COLUMN_NAMES_2018 = [
     "tags",
     "attendance_book",
 ]
+
+CANONICAL_COLUMN_NAMES_2018_EXTRA_CORPORATE = [
+    "invoiced_company_name",
+    "unified_business_no",
+]
+CANONICAL_COLUMN_NAMES_2018_EXTRA_INDIVIDUAL = []
+CANONICAL_COLUMN_NAMES_2018_EXTRA_RESERVED = [
+    "invoiced_company_name",
+    "unified_business_no",
+]
+
 
 HEURISTIC_COMPATIBLE_MAPPING_TABLE = {
     # from 2020 reformatted column names
@@ -414,7 +423,7 @@ class TestCrossYear(unittest.TestCase):
 
         set_2020 = set(CANONICAL_COLUMN_NAMES_2020_CORE)
         set_2019 = set(CANONICAL_COLUMN_NAMES_2019_CORE)
-        set_2018 = set(CANONICAL_COLUMN_NAMES_2018)
+        set_2018 = set(CANONICAL_COLUMN_NAMES_2018_CORE)
         set_intersection_cross_year = set_2020.intersection(
             set_2019.intersection(set_2018.difference(set_extra))
         )
@@ -625,21 +634,63 @@ class Test2018Ticket(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.df = pd.read_csv("./data/corporate-attendees-2018.csv")
-        cls.sanitized_df = sanitize_column_names(cls.df)
+        cls.sanitized_df_corporate = sanitize_column_names(cls.df)
 
-    def test_column_number(self):
-        self.assertEqual(20, len(self.sanitized_df.columns))
+        cls.df_individual = pd.read_csv("./data/individual-attendees-2018.csv")
+        cls.sanitized_df_individual = sanitize_column_names(cls.df_individual)
 
-    def test_column_title_content(self):
-        set_actual = set(self.sanitized_df.columns)
-        set_expected = set(CANONICAL_COLUMN_NAMES_2018)
+        cls.df_reserved = pd.read_csv("./data/reserved-attendees-2018.csv")
+        cls.sanitized_df_reserved = sanitize_column_names(cls.df_reserved)
+
+    def compare_column_set(self, set_actual, set_expected):
         set_union = set_actual.union(set_expected)
 
         self.assertFalse(set_union.difference(set_actual))
         self.assertFalse(set_union.difference(set_expected))
 
-    def test_column_content(self):
-        self.assertEqual("Regular 原價", self.sanitized_df["ticket_type"][1])
+    def test_column_number_corporate(self):
+        self.assertEqual(20, len(self.sanitized_df_corporate.columns))
+
+    def test_column_number_individual(self):
+        self.assertEqual(18, len(self.sanitized_df_individual.columns))
+
+    def test_column_number_reserved(self):
+        self.assertEqual(20, len(self.sanitized_df_reserved.columns))
+
+    def test_column_title_content_all(self):
+        self.assertEqual(len(self.sanitized_df_corporate.columns),
+                         len(CANONICAL_COLUMN_NAMES_2018_CORE) + len(CANONICAL_COLUMN_NAMES_2018_EXTRA_CORPORATE))
+        self.assertEqual(len(self.sanitized_df_individual.columns),
+                         len(CANONICAL_COLUMN_NAMES_2018_CORE) + len(CANONICAL_COLUMN_NAMES_2018_EXTRA_INDIVIDUAL))
+        self.assertEqual(len(self.sanitized_df_reserved.columns),
+                         len(CANONICAL_COLUMN_NAMES_2018_CORE) + len(CANONICAL_COLUMN_NAMES_2018_EXTRA_RESERVED))
+
+    def test_column_title_content_corporate(self):
+        self.compare_column_set(
+            set(self.sanitized_df_corporate.columns),
+            set(CANONICAL_COLUMN_NAMES_2018_CORE).union(set(CANONICAL_COLUMN_NAMES_2018_EXTRA_CORPORATE))
+        )
+
+    def test_column_title_content_individual(self):
+        self.compare_column_set(
+            set(self.sanitized_df_individual.columns),
+            set(CANONICAL_COLUMN_NAMES_2018_CORE).union(set(CANONICAL_COLUMN_NAMES_2018_EXTRA_INDIVIDUAL))
+        )
+
+    def test_column_title_content_reserved(self):
+        self.compare_column_set(
+            set(self.sanitized_df_reserved.columns),
+            set(CANONICAL_COLUMN_NAMES_2018_CORE).union(set(CANONICAL_COLUMN_NAMES_2018_EXTRA_RESERVED))
+        )
+
+    def test_column_content_corporate(self):
+        self.assertEqual("Regular 原價", self.sanitized_df_corporate["ticket_type"][1])
+
+    def test_column_content_individual(self):
+        self.assertEqual("EarlyBird, Discount 優惠價", self.sanitized_df_individual["ticket_type"][1])
+
+    def test_column_content_reserved(self):
+        self.assertEqual("Sponsor 贊助夥伴", self.sanitized_df_reserved["ticket_type"][1])
 
     def test_hash(self):
         string_hashed = hash_string("1234567890-=qwertyuiop[]")
@@ -649,12 +700,28 @@ class Test2018Ticket(unittest.TestCase):
             string_hashed,
         )
 
-    def test_hash_email(self):
-        hash_privacy_info(self.sanitized_df)
+    def test_hash_email_corporate(self):
+        hash_privacy_info(self.sanitized_df_corporate)
 
         self.assertEqual(
             "7fcedd1de57031e2ae316754ff211088a1b08c4a9112676478ac5a6bf0f95131",
-            self.sanitized_df["email"][1],
+            self.sanitized_df_corporate["email"][1],
+        )
+
+    def test_hash_email_individual(self):
+        hash_privacy_info(self.sanitized_df_individual)
+
+        self.assertEqual(
+            "6f197622cc2f46bf56f961489d98e67a116fa058126578a5f37bcb5b16c719e5",
+            self.sanitized_df_individual["email"][1],
+        )
+
+    def test_hash_email_reserved(self):
+        hash_privacy_info(self.sanitized_df_individual)
+
+        self.assertEqual(
+            "15e5151c59563f8e6159239048ea2dba1e3554684ef813916129e0981fd82737",
+            self.sanitized_df_individual["email"][1],
         )
 
 
